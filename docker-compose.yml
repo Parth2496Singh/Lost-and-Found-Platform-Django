@@ -11,8 +11,7 @@ services:
         depends_on:
             - django-app
     django-app:
-        build: 
-            context: .
+        image: "parthsingh2496/django-jenkins:latest"
         container_name: django-app
         networks:
             - django-networks
