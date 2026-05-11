@@ -52,14 +52,13 @@ pipeline {
                 script {
                     withKubeConfig([credentialsId: 'k8s-secret', serverUrl: '']) {
                         sh """
-                            unset KUBERNETES_SERVICE_HOST
-                            unset KUBERNETES_SERVICE_PORT
-                            unset KUBERNETES_MASTER
+                            export no_proxy=127.0.0.1,localhost
+                            export NO_PROXY=127.0.0.1,localhost
+                            unset http_proxy
+                            unset https_proxy
                             
-                            kubectl cluster-info
+                            kubectl cluster-info --kubeconfig=\$KUBECONFIG
                             kubectl apply -f k8s/namespace.yml --validate=false
-                            kubectl apply -f k8s/deployment.yaml --validate=false
-                            kubectl apply -f k8s/service.yaml --validate=false
                         """
                         }
                 }
