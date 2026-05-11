@@ -3,6 +3,11 @@ pipeline {
     agent {label "vinod"}
     
     stages{
+        stage("Pipeline_test"){
+            steps{
+                echo "Hey this pipeline is now starting"
+            }
+        }
         stage("Hello"){
             steps{
                 script{
