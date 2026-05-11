@@ -1,15 +1,13 @@
 @Library("Shared") _
-
 pipeline {
-    agent { label 'vinod' } 
+    agent {label "vinod"}
     
     stages{
         stage("Pipeline_Begin"){
             steps{
-                echo "🚀 Jenkins is now running directly on Vinod!"
+                echo "this pipeline is now starting"
             }
         }
-        
         stage("Hello"){
             steps{
                 script{
@@ -17,7 +15,6 @@ pipeline {
                 }
             }
         }
-        
         stage("Code"){
             steps{
                 script{
@@ -25,25 +22,29 @@ pipeline {
                 }
             }
         }
-        
-        stage("Build & Push"){
+        stage("Build"){
             steps{
                 script{
                     build("django-jenkins", "latest")
+                }
+            }
+        }
+        stage("Push to Dockerhub"){
+            steps{
+                script{
                     dockerhub_push("django-jenkins", "latest", "parthsingh2496")
                 }
             }
         }
-        
-        stage("Deploy to K8s") {
-            steps {
-                script {
-                    withKubeConfig([credentialsId: 'k8s-secret']) {
-                        sh "export http_proxy='' && export https_proxy='' && kubectl apply -f k8s/namespace.yml --insecure-skip-tls-verify"
-                        sh "export http_proxy='' && export https_proxy='' && kubectl apply -f k8s/deployment.yaml --insecure-skip-tls-verify"
-                        sh "export http_proxy='' && export https_proxy='' && kubectl apply -f k8s/service.yaml --insecure-skip-tls-verify"
-                    }
-                }
+        stage("Testing"){
+            steps{
+            echo "Testing the code"
+            }
+        }
+        stage("Deploy"){
+            steps{
+            echo "Deploying the code"
+            sh "docker compose down && docker compose up -d"
             }
         }
     }
