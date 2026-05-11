@@ -20,7 +20,7 @@ pipeline {
         stage("Build"){
             steps{
                 script{
-                    build("parthsingh2496", "django-jenkins", "latest")
+                    build("django-jenkins", "latest")
                 }
             }
         }
