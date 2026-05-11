@@ -1,56 +1,51 @@
 @Library("Shared") _
 
 pipeline {
-    agent {label 'vinod'} 
-       
+    agent { label 'vinod' } 
     
-    stages {
+    stages{
         stage("Pipeline_Begin"){
-            steps {
-                echo "🚀 Jenkins is now running inside a dynamic Kubernetes Pod!"
+            steps{
+                echo "🚀 Jenkins is now running directly on Vinod!"
             }
         }
-
+        
         stage("Hello"){
-            steps {
-                script { hello() }
+            steps{
+                script{
+                    hello()
+                }
             }
         }
-
+        
         stage("Code"){
-            steps {
-                // This runs in the default 'jnlp' container (the Jenkins agent)
-                script {
+            steps{
+                script{
                     clone("https://github.com/Parth2496Singh/Lost-and-Found-Platform-V2.git", "main")
                 }
             }
         }
-
+        
         stage("Build & Push"){
-            steps {
-                // Use Kaniko here if your library supports it, 
-                // or ensure your library 'build' step points to a container that can build.
-                container('kaniko') {
-                    echo "🏗️ Building image using Kaniko..."
-                    // script { build("django-jenkins", "latest") }
+            steps{
+                script{
+                    build("django-jenkins", "latest")
+                    dockerhub_push("django-jenkins", "latest", "parthsingh2496")
                 }
             }
         }
-
+        
         stage("Deploy to K8s") {
             steps {
-                // SWITCH TO THE KUBECTL CONTAINER 🛰️
-                container('kubectl') {
-                    script {
-                        withKubeConfig([credentialsId: 'k8s-secret']) {
-                            sh """
-                                kubectl apply -f k8s/namespace.yml --insecure-skip-tls-verify
-                                kubectl apply -f k8s/deployment.yaml --insecure-skip-tls-verify
-                                kubectl apply -f k8s/service.yaml --insecure-skip-tls-verify
-                            """
-                            }
-                        }
+                script {
+                    withKubeConfig([credentialsId: 'k8s-secret']) {
+                        sh """
+                            kubectl apply -f k8s/namespace.yml --insecure-skip-tls-verify
+                            kubectl apply -f k8s/deployment.yaml --insecure-skip-tls-verify
+                            kubectl apply -f k8s/service.yaml --insecure-skip-tls-verify
+                        """
                     }
+                }
             }
         }
     }
