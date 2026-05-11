@@ -51,6 +51,7 @@ pipeline {
             steps {
                 script {
                     withKubeConfig([credentialsId: 'k8s-secret', serverUrl: '']) {
+                        sh "kubectl cluster-info"
                         sh "kubectl apply -f k8s/namespace.yml"
                         sh "kubectl apply -f k8s/."  
                         // Optional: Force a rollout to pull the latest image from Docker Hub
