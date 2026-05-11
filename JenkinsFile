@@ -47,5 +47,16 @@ pipeline {
             sh "docker compose down && docker compose up -d"
             }
         }
-    }
+        stage("Deploy to K8s") {
+            steps {
+                script {
+                    withKubeConfig([credentialsId: 'k8s-secret', serverUrl: '']) {
+                        sh "kubectl apply -f k8s/namespace.yml"
+                        sh "kubectl apply -f k8s/."  
+                        // Optional: Force a rollout to pull the latest image from Docker Hub
+                        sh "kubectl rollout restart deployment/lost-found-deployment"
+                        }
+                }
+            }
+        }
 }
