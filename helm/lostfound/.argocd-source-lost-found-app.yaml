@@ -1,0 +1,8 @@
+helm:
+  parameters:
+  - name: image.name
+    value: parthsingh2496/lost-found-ultra
+    forcestring: true
+  - name: image.tag
+    value: v1.0.84
+    forcestring: true
