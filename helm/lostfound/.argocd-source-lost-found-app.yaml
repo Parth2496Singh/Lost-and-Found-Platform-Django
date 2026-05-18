@@ -4,5 +4,5 @@ helm:
     value: parthsingh2496/lost-found-ultra
     forcestring: true
   - name: image.tag
-    value: v1.0.58
+    value: v1.0.59
     forcestring: true
