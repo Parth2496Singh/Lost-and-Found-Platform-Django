@@ -1,0 +1,38 @@
+version: 1.0
+
+# ====================================================================
+# 👋 WELCOME TO VELZION! (From Localhost / Vercel / Render to Cloud)
+# ====================================================================
+# This single file replaces complex Dockerfiles and cloud setups.
+# Change the fields below to match your project folders.
+
+services:
+  # 💻 YOUR FRONTEND (React, Vite, NextJS, HTML)
+                # Port your frontend uses (Usually 80, 3000, or 5173)
+
+  # ⚙️ YOUR BACKEND (NodeJS Express, Python Django, Flask, etc.)
+  backend:
+    path: .       # Folder where your backend code lives
+    port: 8000             # The port your backend server listens to (e.g., 5000, 8000)
+     # [DELETE THIS LINE IF YOUR APP DOES NOT USE A DATABASE]
+                           # Leaving this line automatically injects your Database URL!
+
+    # 🔑 YOUR ENVIRONMENT VARIABLES (.env)
+    # Paste the keys from your local .env file right here.
+
+# 🗄️ YOUR DATABASE (Optional)
+# Supported options: mongo:latest, postgres:16-alpine, mysql:8.0, redis:alpine
+# [DELETE THIS ENTIRE BLOCK IF YOUR APP DOES NOT USE A DATABASE]
+
+
+# 🔀 THE INTERNET ROUTER
+# This links your frontend and backend under one single public IP address.
+routes:             # Going to your main URL loads the frontend website
+  /: backend            # Any request starting with /api goes to your backend server
+
+# ⚠️ CRITICAL RULES FOR CODING FOR THE CLOUD:
+# 1. In your frontend code, NEVER hardcode "http://localhost:5000/api".
+#    Change your API calls to relative paths like: fetch('/api/users')
+# 2. In your backend code, connect to your database using the injected variable:
+#    Mongoose example: mongoose.connect(process.env.MONGO_URI)
+#    Postgres example: pg.connect(process.env.DATABASE_URL)
