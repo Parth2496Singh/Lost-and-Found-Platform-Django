@@ -10,7 +10,7 @@ jobs:
   
 
   backend:
-    uses: ./.github/workflows/ecr-build-push.yml
+    uses: ./.github/workflows/ecr-build-push.yaml
     with:
       service_name: lost-found/backend  #ECR repo name
       docker_context: .
