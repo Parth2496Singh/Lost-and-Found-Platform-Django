@@ -64,7 +64,7 @@ The platform utilizes an automated **Terraform to EC2** architecture. The infras
 flowchart TB
     Client([👤 Client/User]) -->|HTTP/HTTPS| NGINX[Nginx Reverse Proxy]
     
-    subgraph AWS Cloud [AWS Infrastructure (Terraform Provisioned)]
+    subgraph AWS Cloud ["AWS Infrastructure (Terraform Provisioned)"]
         subgraph AWS ECR [Elastic Container Registry]
             BackendRepo[lost-found/backend]
             NginxRepo[lost-found/nginx]
