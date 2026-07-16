@@ -10,6 +10,26 @@ from .serializer import LostItemSerializer, FoundItemSerializer, ClaimSerializer
 from reports.utils import match_lost_item
 from django.contrib.auth.models import User
 from django.db.models import Q
+from prometheus_client import Counter, Histogram
+
+# Tracks total claims created
+LOSTFOUND_CLAIMS_TOTAL = Counter(
+    'lostfound_claims_created_total',
+    'Total number of claims submitted'
+)
+
+# Tracks approved vs rejected claims under one metric using labels
+LOSTFOUND_CLAIM_RESOLUTIONS = Counter(
+    'lostfound_claim_resolutions_total',
+    'Total count of claim completions by resolution state',
+    ['resolution']
+)
+
+# Tracks how long the matching algorithm takes to execute
+LOSTFOUND_MATCHING_DURATION = Histogram(
+    'lostfound_matching_algorithm_duration_seconds',
+    'Time spent running the item matching algorithm'
+)
 
 
 # -------------------------------
@@ -49,7 +69,8 @@ class LostItemsViewset(viewsets.ModelViewSet):
         """
         lost_item = self.get_object()
         found_items = FoundItem.objects.all()
-        matches = match_lost_item(lost_item, found_items)
+        with LOSTFOUND_MATCHING_DURATION.time():
+            matches = match_lost_item(lost_item, found_items)
         return Response(matches)
 
 
@@ -111,6 +132,7 @@ class ClaimViewSet(viewsets.ModelViewSet):
             )
 
             serializer.save(lost_item=lost_item, found_item=found_item)
+            LOSTFOUND_CLAIMS_TOTAL.inc()
 
         except Exception as e:
             print("Claim creation error:", e)
@@ -124,6 +146,7 @@ class ClaimViewSet(viewsets.ModelViewSet):
             return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
         claim.status = "Approved"
         claim.save()
+        LOSTFOUND_CLAIM_RESOLUTIONS.labels(resolution="Approved").inc()
         return Response({"status": "Claim approved"})
     
     @action(detail=True, methods=['post'])
@@ -133,6 +156,7 @@ class ClaimViewSet(viewsets.ModelViewSet):
             return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
         claim.status = "Rejected"
         claim.save()
+        LOSTFOUND_CLAIM_RESOLUTIONS.labels(resolution="Rejected").inc()
         return Response({"status": "Claim rejected"})
 
 class UserViewSet(viewsets.ModelViewSet):

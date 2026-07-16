@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django_prometheus.models import ExportModelOperationsMixin
 
 # ===================== CATEGORY CHOICES =====================
 CATEGORY_CHOICES = [
@@ -12,7 +13,7 @@ CATEGORY_CHOICES = [
 ]
 
 # ===================== LOST ITEM MODEL =====================
-class LostItems(models.Model):
+class LostItems((ExportModelOperationsMixin('lost_item'), models.Model):
     # Link to actual user when JWT/auth is implemented
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
 
@@ -28,7 +29,7 @@ class LostItems(models.Model):
         return f"{self.name} (Lost)"
 
 # ===================== FOUND ITEM MODEL =====================
-class FoundItem(models.Model):
+class FoundItem(ExportModelOperationsMixin('found_item'), models.Model):
     # Link to actual user when JWT/auth is implemented
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
 
@@ -44,7 +45,7 @@ class FoundItem(models.Model):
         return f"{self.name} (Found)"
 
 # ===================== CLAIM MODEL =====================
-class Claim(models.Model):
+class ClaimClaim(ExportModelOperationsMixin('claim'), models.Model):
     lost_item = models.ForeignKey(LostItems, on_delete=models.CASCADE)
     found_item = models.ForeignKey(FoundItem, on_delete=models.CASCADE)
 

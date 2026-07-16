@@ -1,0 +1,27 @@
+services:
+    nginx:
+        image: parthsingh2496/lostfound-nginx:latest
+        container_name: nginx
+        networks:
+            - django-networks
+        ports:
+            - "80:80"
+        restart: always
+        depends_on:
+            - django-app
+    django-app:
+        image: parthsingh2496/lost-found-ultra:v1.0.97
+        container_name: django-app
+        networks:
+            - django-networks
+        ports:
+            - "8000:8000"
+        restart: always
+        healthcheck:
+            test: ["CMD", "curl", "-f", "localhost:8000"]
+            interval: 1m30s
+            timeout: 30s
+            retries: 5
+            start_period: 30s
+networks:
+    django-networks:
