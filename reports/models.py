@@ -13,7 +13,7 @@ CATEGORY_CHOICES = [
 ]
 
 # ===================== LOST ITEM MODEL =====================
-class LostItems((ExportModelOperationsMixin('lost_item'), models.Model):
+class LostItems(ExportModelOperationsMixin('lost_item'), models.Model):
     # Link to actual user when JWT/auth is implemented
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
 
