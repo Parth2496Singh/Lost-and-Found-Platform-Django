@@ -45,7 +45,7 @@ class FoundItem(ExportModelOperationsMixin('found_item'), models.Model):
         return f"{self.name} (Found)"
 
 # ===================== CLAIM MODEL =====================
-class ClaimClaim(ExportModelOperationsMixin('claim'), models.Model):
+class Claim(ExportModelOperationsMixin('claim'), models.Model):
     lost_item = models.ForeignKey(LostItems, on_delete=models.CASCADE)
     found_item = models.ForeignKey(FoundItem, on_delete=models.CASCADE)
 
